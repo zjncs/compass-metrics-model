@@ -558,7 +558,10 @@ def contributor_detail_list(client, contributors_enriched_index, date, repo_list
         contribution_type_dict = {}
         is_bot_set = set()
         repo_name_set = set()
-        for item in list(group):
+        # materialize the group once: a groupby iterator is exhausted after
+        # the first pass, so counting it again afterwards would always yield 0
+        group_list = list(group)
+        for item in group_list:
             contribution += item["contribution"]
             contribution_without_observe += item["contribution_without_observe"]
             ecological_type_set.add(item["ecological_type"])
@@ -586,7 +589,7 @@ def contributor_detail_list(client, contributors_enriched_index, date, repo_list
             "contribution_type_list": list(contribution_type_dict.values()),
             "is_bot": True if True in is_bot_set else False,
             "repo_name": list(repo_name_set),
-            "contribution_weeks": len(list(group))
+            "contribution_weeks": len(group_list)
         }
         if is_bot is contributor_item["is_bot"]:
             if key not in "openharmony_ci":
