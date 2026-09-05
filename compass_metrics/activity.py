@@ -42,26 +42,19 @@ def activity_quarterly_contribution(client, contributors_index: str, repo_list: 
     result_bot = []
     result_without_bot = []
 
-    # 获取当前季度的结束时间（将日期调整到季度末）
-    current_quarter_end = date.replace(
-        month=((date.month - 1) // 3 * 3 + 3),
+    # 获取当前季度的起始时间（将日期调整到季度初）。以季度首日为锚点做
+    # 月份加减，避免从月末日期回推时因每月天数不同产生错位
+    # （如 6月30日减3个月得到3月30日而非3月31日）
+    current_quarter_start = date.replace(
+        month=((date.month - 1) // 3 * 3 + 1),
         day=1
     )
-    # 调整到月末
-    if current_quarter_end.month == 3:
-        current_quarter_end = current_quarter_end.replace(day=31)
-    elif current_quarter_end.month == 6:
-        current_quarter_end = current_quarter_end.replace(day=30)
-    elif current_quarter_end.month == 9:
-        current_quarter_end = current_quarter_end.replace(day=30)
-    elif current_quarter_end.month == 12:
-        current_quarter_end = current_quarter_end.replace(day=31)
 
     # 计算最近4个季度的贡献量
     for i in range(4):
         # 计算季度的起止时间
-        quarter_end = current_quarter_end - relativedelta(months=3 * i)
-        quarter_start = quarter_end - relativedelta(months=3) + timedelta(days=1)
+        quarter_start = current_quarter_start - relativedelta(months=3 * i)
+        quarter_end = quarter_start + relativedelta(months=3) - timedelta(days=1)
 
         quarter_data = commit_count(
             client,
