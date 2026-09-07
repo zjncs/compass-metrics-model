@@ -67,7 +67,8 @@ def get_github_versions(repo_url,version):
         for i in range(len(versions)):
             if version in versions[i][1]:
                 end_time = versions[i][0]
-                start_time = versions[i-1][0]
+                if i > 0:
+                    start_time = versions[i-1][0]
                 flag = True
                 break
        
@@ -113,7 +114,8 @@ def get_github_versions(repo_url,version):
                 for i in range(len(versions)):
                     if version in versions[i][1]:
                         end_time = versions[i][0]
-                        start_time = versions[i-1][0]
+                        if i > 0:
+                            start_time = versions[i-1][0]
                 
                 return start_time,end_time
             else:
@@ -171,7 +173,8 @@ def get_gitee_versions(repo_url,version):
         for i in range(len(versions)):
             if version in versions[i][1]:
                 end_time = versions[i][0]
-                start_time = versions[i-1][0]
+                if i > 0:
+                    start_time = versions[i-1][0]
                 flag = True
                 break
        
@@ -217,7 +220,8 @@ def get_gitee_versions(repo_url,version):
                 for i in range(len(versions)):
                     if version in versions[i][1]:
                         end_time = versions[i][0]
-                        start_time = versions[i-1][0]
+                        if i > 0:
+                            start_time = versions[i-1][0]
                 
                 return start_time,end_time
             else:
