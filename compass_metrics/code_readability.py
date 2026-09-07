@@ -96,19 +96,22 @@ def is_modular(file_path):
         class_count = 0
         language = detect_language(file_path)
         
-        if language in ['python', 'ruby', 'perl', 'shell', 'r']:
+        if language in ['python', 'ruby', 'shell', 'r']:
             function_syntax = 'def '
             class_syntax = 'class '
-        elif language in ['java', 'javascript', 'php', 'go']:
-            function_syntax = 'function' if language == 'javascript' else 'def '
+        elif language == 'perl':
+            function_syntax = 'sub '
+            class_syntax = 'package '
+        elif language in ['javascript', 'php', 'go']:
+            function_syntax = {'javascript': 'function', 'php': 'function ', 'go': 'func '}[language]
             class_syntax = 'class '
-        elif language in ['c', 'cpp']:
+        elif language in ['java', 'c', 'cpp']:
             function_syntax = re.compile(r'\w+\s+\w+\s*\([^)]*\)\s*{')
             class_syntax = 'class '
-        
+
         for line in lines:
             stripped_line = line.strip()
-            if language in ['c', 'cpp']:
+            if language in ['java', 'c', 'cpp']:
                 if function_syntax.search(stripped_line):
                     function_count += 1
                 if class_syntax in stripped_line:
