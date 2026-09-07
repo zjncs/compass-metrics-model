@@ -110,20 +110,22 @@ def license(client, openchecker_index, repo_list):
 
 def signed_releases(client, openchecker_index, repo_list):
     """ Does the project cryptographically sign releases? """
-    file_suffix = [".minisig", ".asc (pgp)", "*.sig", ".sign", ".sigstore", ".intoto.jsonl"]
-    
+    # The release-checker collects signature files as plain asset filenames
+    # whose lowercase name ends with one of these extensions.
+    file_suffix = [".minisig", ".asc", ".sig", ".sign", ".sigstore", ".intoto.jsonl"]
+
     release_list = []
     signed_release_list = []
-    
+
     openchecker_data = get_openchecker_data(client, openchecker_index, repo_list[0], "release-checker")
     if openchecker_data is not None:
         command_result_list = deep_get(openchecker_data, ["_source", "command_result", "signed-release-checker", "signed_files"], [])
         for item in command_result_list[:5]:
-            release_list.append(item["release_name"]) 
+            release_list.append(item["release_name"])
             matched_files = [
                 sig_file
                 for sig_file in item["signature_files"]
-                if any(suffix in sig_file for suffix in file_suffix)
+                if any(sig_file.lower().endswith(suffix) for suffix in file_suffix)
             ]
             if len(matched_files) > 0:
                 signed_release_list.append(item["release_name"])
