@@ -108,7 +108,7 @@ def search_readme_in_folder(path)->tuple:
     flag = False
 
     for files in os.listdir(path):
-        if not os.path.isfile(files):
+        if not os.path.isfile(os.path.join(path, files)):
             continue
         
 
@@ -127,31 +127,28 @@ def get_documentation_links_from_repo(repo_url,version,platform='github'):
         repo_url (str): The URL of the repository to clone.
         platform (str, optional): The platform where the repository is hosted. Defaults to 'github'.
     Returns:
-        dict: A dictionary containing the total number of documents, details of documents found in the folder, 
+        dict: A dictionary containing the total number of documents, details of documents found in the folder,
               and details of links found in the README file.
     Raises:
-        ValueError: If the repository clone fails or if the README file is not found in the folder.
+        ValueError: If the repository clone fails. A repository without a
+            README is not an error; its documents are still counted and no
+            README links are reported.
     """
 
 
 
     repo_name = os.path.basename(repo_url)+"-"+version
-    
+
     if repo_name not in os.listdir(TMP_PATH):
         flag,readme_path = clone_repo(repo_url,version)
         if not flag:
-            ValueError("Repository clone failed.")
+            raise ValueError("Repository clone failed.")
         else:
             print(f"Repository cloned to {readme_path}")
 
-    
+
     readme_path = os.path.join(TMP_PATH, repo_name)
-    if readme_path:
-        # print(f"Repository has already cloned to {readme_path}")
-        flag,readme = search_readme_in_folder(readme_path)
-    else:
-        ValueError("README file not found in folder.")
-    
+    flag,readme = search_readme_in_folder(readme_path)
 
     document_count, document_details = count_documents_from_folder(readme_path)
     link_count, links = count_documents_from_Readme(readme)
