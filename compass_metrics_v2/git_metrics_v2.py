@@ -444,7 +444,7 @@ def LOC_frequency_year(client, git_index, date, repos_list, field='lines_changed
         from_date=(date - relativedelta(years=3)).replace(month=1, day=1), to_date=date)
     loc_frequency = client.search(index=git_index, body=query_LOC_frequency)[
         'aggregations']['count_of_uuid']['value']
-    return loc_frequency / 12.85
+    return loc_frequency / 156.43
 
 
 # =========================
